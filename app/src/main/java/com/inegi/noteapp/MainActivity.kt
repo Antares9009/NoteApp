@@ -2,7 +2,12 @@ package com.inegi.noteapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.lifecycle.ViewModelProvider
 import com.inegi.noteapp.databinding.ActivityMainBinding
+import com.inegi.noteapp.db.NoteDatabase
+import com.inegi.noteapp.repository.NoteRepository
+import com.inegi.noteapp.viewmodel.NoteViewModel
+import com.inegi.noteapp.viewmodel.NoteViewModelProviderFactory
 
 /*
 * MVVM Note App Kotlin & Android Studio
@@ -18,6 +23,7 @@ import com.inegi.noteapp.databinding.ActivityMainBinding
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    lateinit var noteViewModel: NoteViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,5 +32,23 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
+    }
+
+    private fun setUpViewModel(){
+
+        val noteRepository = NoteRepository(
+            NoteDatabase(this)
+        )
+
+        val viewModelProviderFactory =
+            NoteViewModelProviderFactory(
+                application,
+                noteRepository
+            )
+
+        noteViewModel = ViewModelProvider(
+            this,
+            viewModelProviderFactory
+        ).get(NoteViewModel::class.java)
     }
 }
